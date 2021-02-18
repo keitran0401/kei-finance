@@ -1,6 +1,6 @@
 flask
 flask-session
-flask-email
+flask-mail
 requests==2.25.1
 idna<3
 sqlalchemy
