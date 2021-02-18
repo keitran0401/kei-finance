@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}
+Quote
+{% endblock %}
+
+{% block main %}
+
+<div>
+    <h3>Result</h3>
+    <p>A share of {{ name }} ({{ symbol }}) costs ${{ price }}</p>
+    <div style="display: flex; justify-content: center;">
+        <a class="btn btn-success" href="/quote" style="margin: 0 10px;">Back</a>
+        <form action="/buy" style="margin: 0 10px;">
+            <input name="symbol" type="hidden" value="{{ symbol }}" />
+            <input name="price" type="hidden" value="{{ price }}" />
+            <button class="btn btn-primary" type="submit">Buy</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

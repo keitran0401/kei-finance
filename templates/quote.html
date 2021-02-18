@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Quote
+{% endblock %}
+
+{% block main %}
+<form action="/quote" method="post">
+    <div class="form-group">
+        <input class="form-control" autocomplete="off" autofocus type="text" name="symbol" placeholder="Symbol">
+    </div>
+    <button class="btn btn-primary" type="submit">Quote</button>
+</form>
+<br>
+<p class="small text-center text-muted">Don't know what to search?
+    <span><a href="https://iextrading.com/trading/eligible-symbols/" target="_blank">Learn more</a></span>
+</p>
+{% endblock %}

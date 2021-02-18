@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}
+Portfolio
+{% endblock %}
+
+{% block main %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th style="text-align: right;">TOTAL</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td colspan="4">Grand Total</td>
+            <td style="text-align: right;">{{ grand_total }}</td>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for i in rows %}
+        <tr>
+            <td>{{ symbols[i] }}</td>
+            <td>{{ names[i] }}</td>
+            <td>{{ shares[i] }}</td>
+            <td>{{ price[i] }}</td>
+            <td style="text-align: right;">{{ total[i] }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4">CASH</td>
+            <td style="text-align: right;">{{ cash }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

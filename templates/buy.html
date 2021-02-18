@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}
+Buy
+{% endblock %}
+
+{% block main %}
+
+<form action="/buy" method="post">
+    {% if symbol %}
+    <div class="form-group">
+        <input type="text" class="form-control" name="symbol" value="{{ symbol }}"/>
+    </div>
+    {% else %}
+    <div class="form-group">
+        <input type="text" class="form-control" autocomplete="off" autofocus name="symbol" placeholder="Symbol" />
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+        <input type="number" class="form-control" min="0" max="{{ max_shares }}" name="shares" id="shares" value="">
+    </div>
+    <div class="form-group">
+        <input type="range" class="form-control" min="0" max="{{ max_shares }}" name="range" id="range" value="0">
+    </div>
+    <button class="btn btn-primary" type="submit">Buy</button>
+</form>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        shares = document.querySelector('#shares');
+        range = document.querySelector('#range');
+        shares.onchange = () => {
+            range.value = shares.value;
+        }
+        range.onchange = () => {
+            shares.value = range.value;
+        }
+    })
+</script>
+{% endblock %}

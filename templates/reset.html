@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Reset password
+{% endblock %}
+
+{% block main %}
+<!-- Reset Password -->
+<form action="/reset" method="post">
+    <div class="form-group">
+        <input class="form-control" name="email" placeholder="Email" type="email">
+    </div>
+    <button class="btn btn-info" type="submit">Verify email</button>
+</form>
+{% endblock %}

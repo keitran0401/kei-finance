@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Mail Verification
+{% endblock %}
+
+{% block main %}
+<form action="/reseted" method="post">
+    <div class="form-group">
+        <input class="form-control" name="email" type="hidden" value="{{ username }}">
+    </div>
+    <div class="form-group">
+        <input class="form-control" name="verify_code" type="hidden" value="{{ verify_code }}">
+    </div>
+    <div class="form-group">
+        <input class="form-control" name="user_code" placeholder="Verify Code" type="number">
+    </div>
+    <div class="form-group">
+        <input class="form-control" name="new_password" placeholder="New Password" type="password">
+    </div>
+    <button class="btn btn-info" type="submit">Reset my Password</button>
+</form>
+{% endblock %}
