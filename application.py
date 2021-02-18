@@ -27,6 +27,10 @@ db = scoped_session(sessionmaker(bind=engine))
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
 
+# Set up Vonage API
+client = vonage.Client(key=os.getenv("VONAGE_API_KEY"), secret=os.getenv("VONAGE_API_SECRET"))
+verify = vonage.Verify(client)
+
 # Set up Gmail service 
 app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
@@ -36,13 +40,8 @@ app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_USE_TLS"] = True
 mail = Mail(app)
 
-# Set up Vonage API
-client = vonage.Client(key=os.getenv("VONAGE_API_KEY"), secret=os.getenv("VONAGE_API_SECRET"))
-verify = vonage.Verify(client)
-
-
-@app.after_request
 # Ensure responses aren't cached
+@app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
@@ -116,25 +115,26 @@ def register():
         # Check input
         username = request.form.get("username")
         password = request.form.get("password")
+        phone = request.form.get("phone")
+
         if not username:
             return apology("must provide username", 403)
         elif not password:
             return apology("must provide password", 403)
+        elif not phone:
+            return apology("must provide phone", 403)
 
         # Check username
-        users = db.execute("SELECT username FROM users WHERE username=:username",
-                           {"username": username}).fetchall()
+        users = db.execute("SELECT username FROM users WHERE username=:username", {"username": username}).fetchall()
         if len(users) != 0:
             return apology("username is not available", 400)
 
         # Insert user to DB
-        db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
-                   {"username": username, "hash": generate_password_hash(password)})
+        db.execute("INSERT INTO users (username, hash, phone) VALUES (:username, :hash, :phone)", {"username": username, "hash": generate_password_hash(password), "phone": phone})
         db.commit()
 
         # Remember which user has logged in
-        users = db.execute("SELECT id FROM users WHERE username=:username",
-                           {"username": username}).fetchall()
+        users = db.execute("SELECT id FROM users WHERE username=:username", {"username": username}).fetchall()
         session["user_id"] = users[0]["id"]
 
         # Back to Homepage
@@ -158,16 +158,17 @@ def login():
             return apology("must provide username", 403)
         elif not password:
             return apology("must provide password", 403)
-        
+
         # Get user
-        users = db.execute("SELECT * FROM users WHERE username = :username",
-                           {"username": username}).fetchall()
+        users = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchall()
         if len(users) != 1 or not check_password_hash(users[0]["hash"], password):
             return apology("invalid username and/or password", 403)
 
         # Send verify code via phone
-        response = verify.start_verification(number=os.getenv("RECIPIENT_NUMBER"), brand="Finance", code_length="6")
+        phone = users[0]["phone"]
+        response = verify.start_verification(number="+1 306 250 2403", brand="Kei Finance", code_length="6")
         response_id = response["request_id"]
+        # verify_time = datetime.datetime.now()
 
         # Go to Verify Page
         return render_template('phoneVerify.html', response_id=response_id, username=username)
@@ -181,14 +182,17 @@ def loggedin():
 
     # Check input
     user_code = request.form.get("user_code")
+    response_id = request.form.get("response_id")
+    username = request.form.get("username")
+    
     if not user_code:
         return apology("must provide verify code", 403)
 
     # Check phone code
-    check_response = verify.check(request.form.get("response_id"), code=user_code)
+    check_response = verify.check(response_id, code=user_code)
     if check_response["status"] == "0":
         # Remember which user has logged in
-        users = db.execute("SELECT * FROM users WHERE username = :username", {"username": request.form.get("username")}).fetchall()
+        users = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchall()
         session["user_id"] = users[0]["id"]
 
         # Back to Homepage
