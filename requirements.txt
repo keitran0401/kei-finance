@@ -1,5 +1,5 @@
-python3
-flask
+python==3.9.1
+flask==1.1.2
 flask-session
 flask-mail
 requests
@@ -7,7 +7,7 @@ idna
 sqlalchemy
 SQLAlchemy
 temp
-werkzeug
+werkzeug==1.0.1
 psycopg2
 jinja2
 gunicorn
