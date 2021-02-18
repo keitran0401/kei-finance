@@ -2,7 +2,7 @@ flask
 flask-session
 flask-email
 requests==2.25.1
-idna==3.0
+idna<3
 sqlalchemy
 SQLAlchemy
 temp
