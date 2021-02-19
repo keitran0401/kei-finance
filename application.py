@@ -55,7 +55,8 @@ app.jinja_env.filters["usd"] = usd
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure session to use filesystem (instead of signed cookies)
-# app.config["SESSION_FILE_DIR"] = mkdtemp() # open(os.path.join(app.config["SESSION_FILE_DIR", testFile.txt]), 'a')
+    # app.config["SESSION_FILE_DIR"] = mkdtemp() 
+    # with open(os.path.join(app.config["SESSION_FILE_DIR", testFile.txt]), 'a') as f: f.write('Hello world')
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -129,6 +130,11 @@ def register():
         if len(users) != 0:
             return apology("username is not available", 400)
 
+        # Welcome message
+        msg = Message("Kei Finance: Welcome to my app", recipients=[username])
+        msg.html = "<p>{}</p>".format("That's you. Welcome aboard! Congratulations on being part of the team! The whole company welcomes you and we look forward to a successful journey with you!")
+        mail.send(msg)
+
         # Insert user to DB
         db.execute("INSERT INTO users (username, hash, phone) VALUES (:username, :hash, :phone)", {"username": username, "hash": generate_password_hash(password), "phone": phone})
         db.commit()
@@ -166,9 +172,8 @@ def login():
 
         # Send verify code via phone
         phone = users[0]["phone"]
-        response = verify.start_verification(number="+1 306 250 2403", brand="Kei Finance", code_length="6")
+        response = verify.start_verification(number=phone, brand="Kei Finance", code_length="6")
         response_id = response["request_id"]
-        # verify_time = datetime.datetime.now()
 
         # Go to Verify Page
         return render_template('phoneVerify.html', response_id=response_id, username=username)
@@ -229,7 +234,7 @@ def reset():
 
         # Send verify code via email
         verify_code = randrange(100000, 1000000)
-        msg = Message("Finance: Password Reset", recipients=[username])
+        msg = Message("Kei Finance: Password Reset", recipients=[username])
         msg.html = "<p><b>{}</b></p>".format(verify_code)
         mail.send(msg)
 
@@ -349,13 +354,16 @@ def buy():
         return redirect("/")
     else:
         symbol = request.args.get("symbol")
-        price = float(request.args.get("price"))
+        price = request.args.get("price")
 
-        # Get user's max shares
-        rows = db.execute("SELECT cash FROM users WHERE id=:user_id", {"user_id": session["user_id"]}).fetchone()
-        cash = float(rows["cash"])
-        max_shares = math.floor(cash / price)
-        return render_template("buy.html", symbol=symbol, max_shares=max_shares)
+        if symbol == 'NoneType' or price == None:
+            return render_template("buy.html")
+        else: 
+            # Get user's max shares
+            rows = db.execute("SELECT cash FROM users WHERE id=:user_id", {"user_id": session["user_id"]}).fetchone()
+            cash = float(rows["cash"])
+            max_shares = math.floor(cash / float(price))
+            return render_template("buy.html", symbol=symbol, max_shares=max_shares)
 
 
 # Sell Page

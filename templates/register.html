@@ -7,17 +7,14 @@ Register
 {% block main %}
 <form action="/register" method="post">
     <div class="form-group">
-        <input class="form-control" autocomplete="off" autofocus name="username" type="email"
-            placeholder="Email address" />
-        <p class="small text-center text-muted">Example: abc@email.com</p>
+        <input class="form-control" autocomplete="off" autofocus name="username" type="email" placeholder="Email" />
     </div>
     <div class="form-group">
-        <input class="form-control" autocomplete="off" name="phone" type="text" placeholder="Phone number" />
-        <p class="small text-center text-muted">Example: +1 999 999 9999</p>
+        <input class="form-control" autocomplete="off" name="phone" type="text" placeholder="Phone" />
+        <p class="small text-center text-muted">*Example: +1 306 250 9999</p>
     </div>
     <div class="form-group">
         <input class="form-control" name="password" type="password" placeholder="Password" />
-        <p class="small text-center text-muted">More than 8 characters</p>
     </div>
     <div class="form-group" style="display: flex; align-items: center; justify-content: center;">
         <input name="checkbox" id="checkbox" type="checkbox" />
